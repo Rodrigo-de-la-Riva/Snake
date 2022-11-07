@@ -193,6 +193,8 @@ def menu():
     elif opcion == 2:
         print('Tabla de puntuaciones: ')
         print(punteo.transversal())
+        input('Pulse la tecla enter para continuar...')
+        menu()
     elif opcion == 3:
         print('Que tenga un buen dia')
 

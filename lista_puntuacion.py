@@ -49,31 +49,35 @@ class SimplyLinkedList:
             previous.next = new_node
             self.size += 1
 
-    # insertar en una dato especifico
+    # insertar mediante un dato especifico
     def insert_by(self, data, name):
         new_node = Node(data, name=name)
         pos = 0
-        if self.head <= data:
-            self.unshift(data, name)
-        elif self.tail <= data:
-            self.appen(data, name)
+
         if self.is_empty():
             self.head = new_node
             self.tail = new_node
             self.size += 1
         else:
-            current = self.head
-            while True:
-                pos += 1
-                if current.data <= data:
-                    prev = self.find_at(pos - 1)
-                    new_node.next = current
-                    prev.next = new_node
-                    break
-                current = current.next
+            if self.head.data <= data:
+                self.unshift(data, name)
+            elif self.tail.data >= data:
+                self.appen(data, name)
+            else:
+                current = self.head
+                while True:
+                    if current.data <= data:
+                        prev = self.find_at(pos - 1)
+                        new_node.next = current
+                        prev.next = new_node
+                        break
+                    current = current.next
+                    pos += 1
+                self.size += 1
+        if self.size > 5:
+            self.pop()
 
-            self.size += 1
-
+    # Encontrar mediante el valor deseado
     def find_by(self, data):
         current = self.head
         while current is not None:
@@ -84,6 +88,7 @@ class SimplyLinkedList:
 
         raise Exception('El elemento no existe')
 
+    # Encontrar mediante la posicion deseada
     def find_at(self, pos):
         current = self.head
         i = 0
@@ -96,6 +101,7 @@ class SimplyLinkedList:
 
         raise Exception('El elemento no existe')
 
+    # Recorrer la lista
     def transversal(self):
         current = self.head
         result = ''
