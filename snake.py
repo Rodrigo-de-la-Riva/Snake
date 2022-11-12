@@ -1,22 +1,21 @@
 from cube import Cube
-from node import Node
 from ajustes import *
 
 
 class Snake:
     # Variables de la serpiente (NO TIENEN NADA RELACIONADO CON LA PILA)
     turns = {}
-    body = []
 
-    def __init__(self, pos_x=10, pos_y=10):
+    def __init__(self, pos_x=10, pos_y=10, color=GREEN):
         # Variables de la serpiente para la pila
         self.size = 0
         self.head = None
+        self.tail = None
 
         # Variables de la serpiente (NO TIENEN NADA RELACIONADO CON LA PILA)
-        self.color = GREEN
+        self.color = color
         self.cabeza = Cube((pos_x, pos_y))
-        self.body.append(self.cabeza)
+        self.body = self.transversal()
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.dir_x = 0
@@ -32,103 +31,129 @@ class Snake:
             if keys[pygame.K_LEFT]:
                 self.dir_x = -1
                 self.dir_y = 0
-                self.turns[self.cabeza.pos[:]] = [self.dir_x, self.dir_y]
+                self.turns[self.cabeza.pos] = [self.dir_x, self.dir_y]
 
             elif keys[pygame.K_DOWN]:
                 self.dir_x = 0
                 self.dir_y = 1
-                self.turns[self.cabeza.pos[:]] = [self.dir_x, self.dir_y]
+                self.turns[self.cabeza.pos] = [self.dir_x, self.dir_y]
 
             elif keys[pygame.K_RIGHT]:
                 self.dir_x = 1
                 self.dir_y = 0
-                self.turns[self.cabeza.pos[:]] = [self.dir_x, self.dir_y]
+                self.turns[self.cabeza.pos] = [self.dir_x, self.dir_y]
 
             elif keys[pygame.K_UP]:
                 self.dir_x = 0
                 self.dir_y = -1
-                self.turns[self.cabeza.pos[:]] = [self.dir_x, self.dir_y]
+                self.turns[self.cabeza.pos] = [self.dir_x, self.dir_y]
 
-        # Este ciclo hace que el cuerpo de la serpiente siga el movimiento de la cabeza
-        for i, c in enumerate(self.body):
-            p = c.pos[:]
+        # Este ciclo controla los movimientos de la serpiente
+        for i in range(self.size):
+            p = self.cabeza.pos
             if p in self.turns:
                 turn = self.turns[p]
-                c.move(turn[0], turn[1])
-                if i == len(self.body)-1:
+                self.cabeza.move(turn[0], turn[1])
+                if i == self.size-1:
                     self.turns.pop(p)
             else:
-                if c.dir_x == -1 and c.pos[0] <= 0:
-                    c.pos = (c.rows-1, c.pos[1])
-                elif c.dir_x == 1 and c.pos[0] >= c.rows-1:
-                    c.pos = (0, c.pos[1])
-                elif c.dir_y == -1 and c.pos[1] <= 0:
-                    c.pos = (c.pos[0], c.rows-1)
-                elif c.dir_y == 1 and c.pos[1] >= c.rows-1:
-                    c.pos = (c.pos[0], 0)
+                if self.cabeza.dir_x == -1 and self.cabeza.pos[0] <= 0:
+                    self.cabeza.pos = (self.cabeza.rows-1, self.cabeza.pos[1])
+                elif self.cabeza.dir_x == 1 and self.cabeza.pos[0] >= self.cabeza.rows-1:
+                    self.cabeza.pos = (0, self.cabeza.pos[1])
+                elif self.cabeza.dir_y == -1 and self.cabeza.pos[1] <= 0:
+                    self.cabeza.pos = (self.cabeza.pos[0], self.cabeza.rows-1)
+                elif self.cabeza.dir_y == 1 and self.cabeza.pos[1] >= self.cabeza.rows-1:
+                    self.cabeza.pos = (self.cabeza.pos[0], 0)
                 else:
-                    c.move(c.dir_x, c.dir_y)
+                    self.cabeza.move(self.cabeza.dir_x, self.cabeza.dir_y)
 
     # Funcion para dibujar la serpiente
     def draw(self, surface):
-        for i, c in enumerate(self.body):
+        for i in range(self.size):
             if i == 0:
-                c.draw(surface, True)
+                self.cabeza.draw(surface, True)
             else:
-                c.draw(surface)
+                self.tail.draw(surface)
 
+    # Funcion para añadir otro cubo al cuerpo de la serpiente
     def add_cube(self):
-        tail = self.body[-1]
+        tail = self.cabeza
         dx, dy = tail.dir_x, tail.dir_y
 
         if dx == 1 and dy == 0:
-            self.body.append(Cube((tail.pos[0]-1, tail.pos[1])))
+            self.insert(Cube((tail.pos[0]-1, tail.pos[1])))
         elif dx == -1 and dy == 0:
-            self.body.append(Cube((tail.pos[0]+1, tail.pos[1])))
+            self.insert(Cube((tail.pos[0]+1, tail.pos[1])))
         elif dx == 0 and dy == 1:
-            self.body.append(Cube((tail.pos[0], tail.pos[1]-1)))
+            self.insert(Cube((tail.pos[0], tail.pos[1]-1)))
         elif dx == 0 and dy == -1:
-            self.body.append(Cube((tail.pos[0], tail.pos[1]+1)))
+            self.insert(Cube((tail.pos[0], tail.pos[1]+1)))
 
-        self.body[-1].dir_x = dx
-        self.body[-1].dir_y = dy
+        self.tail.dir_x = dx
+        self.tail.dir_y = dy
 
     # Funcion para reiniciar la serpiente a su posicion inicial
     def restart(self, pos):
         self.cabeza = Cube(pos)
-        self.body = []
-        self.body.append(self.cabeza)
+        self.body = self.transversal()
         self.turns = {}
         self.dir_x = 0
         self.dir_y = 1
+        self.size = 0
+        self.head = None
+        self.tail = None
 
-    # Funciones para el funcionamiento de la pila
+    # Funciones para el funcionamiento de la cola
     def is_empty(self):
-        return self.head is None
+        return self.head is None and self.tail is None
 
     def insert(self, data):
-        new_node = Node(data)
+        new_node = data
         if self.is_empty():
             self.head = new_node
+            self.tail = new_node
             self.size += 1
         else:
-            new_node.next = self.head
-            self.head = new_node
+            self.tail.next = new_node
+            self.tail = new_node
             self.size += 1
-
-    def delete(self):
-        if self.is_empty():
-            raise Exception('Subdesbordamiento de pila')
-        else:
-            delete = self.head
-            self.head = self.head.next
-            delete.next = None
-            self.size -= 1
 
     def transversal(self):
         current = self.head
         total = ''
         while current is not None:
-            total += str(current.data)
+            total += str(current)
             current = current.next
         return total
+
+    def find_at(self, pos):
+        current = self.head
+        i = 0
+        while current is not None:
+            if i == pos:
+                return current
+            else:
+                current = current.next
+                i += 1
+
+        raise Exception('El elemento no existe')
+
+    def pop(self):
+        if self.is_empty():
+            raise Exception('Subdesbordamiento de lista')
+        elif self.size == 1:
+            delete = self.head
+            self.head = None
+            self.tail = None
+            self.size = 0
+
+            return delete
+        else:
+            delete = self.tail
+            prev = self.find_at(self.size - 2)
+            self.tail = prev
+            self.tail.next = None
+            self.size -= 1
+
+            return delete

@@ -2,6 +2,7 @@ import random
 from ajustes import *
 from snake import Snake
 from cube import Cube
+from time import time
 from lista_puntuacion import SimplyLinkedList
 
 snake = Snake()
@@ -77,6 +78,13 @@ def food_type():
 # Variable que almacenara la comida
 food = food_type()
 
+# Variables para los obstaculos
+obstacle1 = brick()
+obstacle2 = brick()
+obstacle3 = column()
+obstacle4 = column()
+obstacle5 = wall()
+
 
 # Funciones de dibujo
 def draw(surface, grid):
@@ -147,48 +155,41 @@ def menu():
         print('4) Dinamica')
         opcion = int(input('Seleccione la dificultad: '))
         if opcion == 1:
+            snake.add_cube()
             win = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption('Snake')
             dificult = 'Easy'
             run = True
         elif opcion == 2:
+            snake.add_cube()
+
             velocidad = velocidad * 2
             win = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption('Snake')
-
-            # Variables para los obstaculos
-            obstacle1 = brick()
-            obstacle2 = brick()
-            obstacle3 = column()
 
             dificult = 'Mid'
 
             run = True
         elif opcion == 3:
+            snake.add_cube()
+
             velocidad = velocidad * 5
             win = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption('Snake')
-
-            # Variables para los obstaculos
-            obstacle1 = brick()
-            obstacle2 = brick()
-            obstacle3 = column()
-            obstacle4 = column()
-            obstacle5 = wall()
 
             dificult = 'Hard'
 
             run = True
         elif opcion == 4:
+            snake.add_cube()
 
-            # Variables para los obstaculos
-            obstacle1 = brick()
-            obstacle2 = brick()
-            obstacle3 = column()
-            obstacle4 = column()
-            obstacle5 = wall()
+            win = pygame.display.set_mode((WIDTH, HEIGHT))
+            pygame.display.set_caption('Snake')
 
             dificult = 'Dinamic'
+            timer_start = time()
+
+            run = True
 
     elif opcion == 2:
         print('Tabla de puntuaciones: ')
@@ -200,7 +201,14 @@ def menu():
 
     # Ciclo encargado de correr el juego
     while run:
-        clock.tick(velocidad)
+        if dificult != 'Dinamic':
+            clock.tick(velocidad)
+        else:
+            clock.tick(velocidad)
+            timer_end = time()
+            if timer_end - timer_start >= 30:
+                velocidad += 1
+                timer_start = time()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -208,7 +216,8 @@ def menu():
 
         snake.move()
 
-        if snake.body[0].pos == food.pos:
+        # Verificar si choca con la comida
+        if snake.cabeza.pos == food.pos:
             if food.food == 'manzana':
                 snake.add_cube()
                 food = food_type()
@@ -225,79 +234,91 @@ def menu():
                 food = food_type()
 
             elif food.food == 'pera':
+                snake.pop()
                 food = food_type()
 
             elif food.food == 'piña':
+                snake.pop()
+                snake.pop()
+                snake.pop()
+                snake.pop()
+                snake.pop()
                 food = food_type()
 
+        # Verificar choques con los obstaculos
         if dificult == 'Mid':
-            if snake.body[0].pos == obstacle1.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
+            if snake.cabeza.pos == obstacle1.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
+                punteo.insert_by(score, name=nombre)
+
+                snake.restart((10, 10))
+
+                pygame.quit()
+                input('Perdiste, presiona la tecla enter para volver al menu...')
+                menu()
+            elif snake.cabeza.pos == obstacle2.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
+                punteo.insert_by(score, name=nombre)
+
+                snake.restart((10, 10))
+
+                pygame.quit()
+                input('Perdiste, presiona la tecla enter para volver al menu...')
+                menu()
+            elif snake.cabeza.pos == obstacle3.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
                 punteo.insert_by(score, name=nombre)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.body[0].pos == obstacle2.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
-                punteo.insert_by(score, name=nombre)
 
-                snake.restart((10, 10))
-                pygame.quit()
-                input('Perdiste, presiona la tecla enter para volver al menu...')
-                menu()
-            elif snake.body[0].pos == obstacle3.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
-                punteo.insert_by(score, name=nombre)
-
-                snake.restart((10, 10))
-                pygame.quit()
-                input('Perdiste, presiona la tecla enter para volver al menu...')
-                menu()
+        # Verificar choques con los obstaculos
         elif dificult == 'Hard' or dificult == 'Dinamic':
-            if snake.body[0].pos == obstacle1.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
+
+            if snake.cabeza.pos == obstacle1.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
                 punteo.insert_by(score, name=nombre)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.body[0].pos == obstacle2.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
+            elif snake.cabeza.pos == obstacle2.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
                 punteo.insert_by(score, name=nombre)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.body[0].pos == obstacle3.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
+            elif snake.cabeza.pos == obstacle3.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
                 punteo.insert_by(score, name=nombre)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.body[0].pos == obstacle4.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
+            elif snake.cabeza.pos == obstacle4.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
                 punteo.insert_by(score, name=nombre)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.body[0].pos == obstacle5.pos:
-                print('Puntos: ', len(snake.body))
-                score = len(snake.body)
+            elif snake.cabeza.pos == obstacle5.pos:
+                print('Puntos: ', snake.size)
+                score = snake.size
                 punteo.insert_by(score, name=nombre)
 
                 snake.restart((10, 10))
@@ -307,19 +328,21 @@ def menu():
 
         draw(win, grid)
 
-        try:
-            for x in range(len(snake.body)):
-                if snake.body[x].pos in list(map(lambda z: z.pos, snake.body[x + 1:])):
-                    print('Puntos: ', len(snake.body))
-                    score = len(snake.body)
-                    punteo.insert_by(score, name=nombre)
-
-                    snake.restart((10, 10))
-                    run = False
-        except IndexError:
-            pygame.quit()
-            input('Perdiste, presiona la tecla enter para volver al menu...')
-            menu()
+        # Verificar si la serpiente choco con ella misma
+        # try:
+        #     for x in range(snake.size):
+        #         if snake.cabeza.pos in list(map(lambda z: z.pos, snake.body[x + 1:])):
+        #             print('Puntos: ', snake.size)
+        #             score = snake.size
+        #             punteo.insert_by(score, name=nombre)
+        #
+        #             snake.restart((10, 10))
+        #
+        #             run = False
+        # except IndexError:
+        #     pygame.quit()
+        #     input('Perdiste, presiona la tecla enter para volver al menu...')
+        #     menu()
 
 
 menu()

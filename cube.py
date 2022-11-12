@@ -12,6 +12,7 @@ class Cube(object):
         self.dir_x = 1
         self.dir_y = 0
         self.food = food
+        self.next = None
 
     def move(self, dir_x, dir_y):
         self.dir_x = dir_x
