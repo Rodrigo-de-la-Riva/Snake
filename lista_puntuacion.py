@@ -50,8 +50,8 @@ class SimplyLinkedList:
             self.size += 1
 
     # insertar mediante un dato especifico
-    def insert_by(self, data, name):
-        new_node = Node(data, name=name)
+    def insert_by(self, data, name, snake_len):
+        new_node = Node(data, name=name, snake_len=snake_len)
         pos = 0
 
         if self.is_empty():
@@ -106,7 +106,7 @@ class SimplyLinkedList:
         current = self.head
         result = ''
         while current is not None:
-            result += f'{current.name}: {str(current.data)}'
+            result += f'Jugador: {current.name} Tamaño de la serpiente: {current.snake_len} Frutas comidas: {str(current.data)}'
             if current is not self.tail:
                 result += '\n'
             current = current.next

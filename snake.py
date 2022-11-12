@@ -3,16 +3,14 @@ from ajustes import *
 
 
 class Snake:
-    # Variables de la serpiente (NO TIENEN NADA RELACIONADO CON LA PILA)
+    # Lista que almacena los giros que realizo la serpiente
     turns = {}
 
     def __init__(self, pos_x=10, pos_y=10, color=GREEN):
-        # Variables de la serpiente para la pila
-        self.size = 0
+        # Variables de la serpiente
         self.head = None
         self.tail = None
-
-        # Variables de la serpiente (NO TIENEN NADA RELACIONADO CON LA PILA)
+        self.snake_len = 0
         self.color = color
         self.cabeza = Cube((pos_x, pos_y))
         self.body = self.transversal()
@@ -20,6 +18,7 @@ class Snake:
         self.pos_y = pos_y
         self.dir_x = 0
         self.dir_y = 1
+        self.insert(self.cabeza)
 
     # Funcion para el movimiento de la serpiente
     def move(self):
@@ -49,12 +48,12 @@ class Snake:
                 self.turns[self.cabeza.pos] = [self.dir_x, self.dir_y]
 
         # Este ciclo controla los movimientos de la serpiente
-        for i in range(self.size):
+        for i in range(0, 1):
             p = self.cabeza.pos
             if p in self.turns:
                 turn = self.turns[p]
                 self.cabeza.move(turn[0], turn[1])
-                if i == self.size-1:
+                if i == 1-1:
                     self.turns.pop(p)
             else:
                 if self.cabeza.dir_x == -1 and self.cabeza.pos[0] <= 0:
@@ -68,16 +67,28 @@ class Snake:
                 else:
                     self.cabeza.move(self.cabeza.dir_x, self.cabeza.dir_y)
 
+        current = self.head
+        pos1 = current.pos
+        while current.next is not None:
+            pos2 = current.next.pos
+            current = current.next
+            current.pos = pos1
+            pos1 = pos2
+
     # Funcion para dibujar la serpiente
     def draw(self, surface):
-        for i in range(self.size):
-            if i == 0:
+        for i in range(self.snake_len):
+            if i == 1:
                 self.cabeza.draw(surface, True)
             else:
-                self.tail.draw(surface)
+                current = self.head
+                while current is not None:
+                    current.draw(surface)
+                    current = current.next
 
     # Funcion para añadir otro cubo al cuerpo de la serpiente
     def add_cube(self):
+        current = self.head
         tail = self.cabeza
         dx, dy = tail.dir_x, tail.dir_y
 
@@ -90,8 +101,19 @@ class Snake:
         elif dx == 0 and dy == -1:
             self.insert(Cube((tail.pos[0], tail.pos[1]+1)))
 
-        self.tail.dir_x = dx
-        self.tail.dir_y = dy
+        while current is not None:
+            current.dir_x = dx
+            current.dir_y = dy
+            current = current.next
+
+    # Funcion que verifica si la cabeza choco con el cuerpo
+    def positions_check(self):
+        current = self.head.next
+        while current.next is not None:
+            if self.head.pos == current.next.pos:
+                return False
+            else:
+                current = current.next
 
     # Funcion para reiniciar la serpiente a su posicion inicial
     def restart(self, pos):
@@ -100,9 +122,10 @@ class Snake:
         self.turns = {}
         self.dir_x = 0
         self.dir_y = 1
-        self.size = 0
         self.head = None
         self.tail = None
+        self.snake_len = 0
+        self.insert(self.cabeza)
 
     # Funciones para el funcionamiento de la cola
     def is_empty(self):
@@ -113,11 +136,11 @@ class Snake:
         if self.is_empty():
             self.head = new_node
             self.tail = new_node
-            self.size += 1
+            self.snake_len += 1
         else:
             self.tail.next = new_node
             self.tail = new_node
-            self.size += 1
+            self.snake_len += 1
 
     def transversal(self):
         current = self.head
@@ -142,18 +165,18 @@ class Snake:
     def pop(self):
         if self.is_empty():
             raise Exception('Subdesbordamiento de lista')
-        elif self.size == 1:
+        elif self.snake_len == 1:
             delete = self.head
             self.head = None
             self.tail = None
-            self.size = 0
+            self.snake_len = 0
 
             return delete
         else:
             delete = self.tail
-            prev = self.find_at(self.size - 2)
+            prev = self.find_at(self.snake_len - 2)
             self.tail = prev
             self.tail.next = None
-            self.size -= 1
+            self.snake_len -= 1
 
             return delete

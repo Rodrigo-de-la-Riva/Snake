@@ -9,16 +9,17 @@ snake = Snake()
 punteo = SimplyLinkedList()
 run = False
 velocidad = FPS
+dificult = ''
 
 
 # Funcion para generar los obstaculos
 def random_obsatcle(rows, item):
-    positions = item.body
+    positions = item.cabeza.pos
 
     while True:
         dir_x = random.randrange(rows)
         dir_y = random.randrange(rows)
-        if len(list(filter(lambda z: z.pos == (dir_x, dir_y), positions))) > 0:
+        if (dir_x, dir_y) == positions:
             continue
         else:
             break
@@ -42,13 +43,32 @@ def column():
 
 # Funcion para generar la comida
 def random_food(rows, item):
-    positions = item.body
+    global obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, dificult
+    positions = item.cabeza.pos
 
     while True:
         dir_x = random.randrange(rows)
         dir_y = random.randrange(rows)
-        if len(list(filter(lambda z: z.pos == (dir_x, dir_y), positions))) > 0:
+        if (dir_x, dir_y) == positions:
             continue
+        if dificult == 'Mid':
+            if (dir_x, dir_y) == obstacle1.pos:
+                continue
+            elif (dir_x, dir_y) == obstacle2.pos:
+                continue
+            elif (dir_x, dir_y) == obstacle3.pos:
+                continue
+        elif dificult == 'Hard' or dificult == 'Dinamic':
+            if (dir_x, dir_y) == obstacle1.pos:
+                continue
+            elif (dir_x, dir_y) == obstacle2.pos:
+                continue
+            elif (dir_x, dir_y) == obstacle3.pos:
+                continue
+            elif (dir_x, dir_y) == obstacle4.pos:
+                continue
+            elif (dir_x, dir_y) == obstacle5.pos:
+                continue
         else:
             break
     return dir_x, dir_y
@@ -77,13 +97,6 @@ def food_type():
 
 # Variable que almacenara la comida
 food = food_type()
-
-# Variables para los obstaculos
-obstacle1 = brick()
-obstacle2 = brick()
-obstacle3 = column()
-obstacle4 = column()
-obstacle5 = wall()
 
 
 # Funciones de dibujo
@@ -141,6 +154,8 @@ def menu():
     nombre = ''
     velocidad = FPS
     dificult = 'Easy'
+    food_eaten = 0
+    choque = True
     print('Bienvenido a Snake')
     print('1) Jugar')
     print('2) Tabla de puntuaciones')
@@ -167,6 +182,11 @@ def menu():
             win = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption('Snake')
 
+            # Variables para los obstaculos
+            obstacle1 = brick()
+            obstacle2 = brick()
+            obstacle3 = column()
+
             dificult = 'Mid'
 
             run = True
@@ -177,6 +197,13 @@ def menu():
             win = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption('Snake')
 
+            # Variables para los obstaculos
+            obstacle1 = brick()
+            obstacle2 = brick()
+            obstacle3 = column()
+            obstacle4 = column()
+            obstacle5 = wall()
+
             dificult = 'Hard'
 
             run = True
@@ -185,6 +212,13 @@ def menu():
 
             win = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption('Snake')
+
+            # Variables para los obstaculos
+            obstacle1 = brick()
+            obstacle2 = brick()
+            obstacle3 = column()
+            obstacle4 = column()
+            obstacle5 = wall()
 
             dificult = 'Dinamic'
             timer_start = time()
@@ -221,36 +255,84 @@ def menu():
             if food.food == 'manzana':
                 snake.add_cube()
                 food = food_type()
+                food_eaten += 1
 
             elif food.food == 'fresa':
                 snake.add_cube()
                 snake.add_cube()
                 food = food_type()
+                food_eaten += 1
 
             elif food.food == 'banano':
                 snake.add_cube()
                 snake.add_cube()
                 snake.add_cube()
                 food = food_type()
+                food_eaten += 1
 
             elif food.food == 'pera':
-                snake.pop()
-                food = food_type()
+                if snake.snake_len > 1:
+                    snake.pop()
+                    food = food_type()
+                    food_eaten += 1
+                else:
+                    print('Frutas comidas: ', food_eaten)
+                    score = food_eaten
+                    longitud = snake.snake_len
+                    punteo.insert_by(score, name=nombre, snake_len=longitud)
 
+                    food = food_type()
+
+                    snake.restart((10, 10))
+
+                    pygame.quit()
+                    input('Perdiste, presiona la tecla enter para volver al menu...')
+                    menu()
             elif food.food == 'piña':
-                snake.pop()
-                snake.pop()
-                snake.pop()
-                snake.pop()
-                snake.pop()
-                food = food_type()
+                if snake.snake_len > 5:
+                    snake.pop()
+                    snake.pop()
+                    snake.pop()
+                    snake.pop()
+                    snake.pop()
+
+                    food = food_type()
+                    food_eaten += 1
+
+                else:
+                    print('Frutas comidas: ', food_eaten)
+                    score = food_eaten
+                    longitud = snake.snake_len
+                    punteo.insert_by(score, name=nombre, snake_len=longitud)
+
+                    food = food_type()
+
+                    snake.restart((10, 10))
+
+                    pygame.quit()
+                    input('Perdiste, presiona la tecla enter para volver al menu...')
+                    menu()
+
+        # Verificar si al encojerse aun tiene cuerpo la serpiente
+        if snake.snake_len <= 0:
+            print('Frutas comidas: ', food_eaten)
+            score = food_eaten
+            longitud = snake.snake_len
+            punteo.insert_by(score, name=nombre, snake_len=longitud)
+
+            snake.restart((10, 10))
+
+            pygame.quit()
+            input('Perdiste, presiona la tecla enter para volver al menu...')
+            menu()
 
         # Verificar choques con los obstaculos
         if dificult == 'Mid':
             if snake.cabeza.pos == obstacle1.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
 
@@ -258,9 +340,10 @@ def menu():
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
             elif snake.cabeza.pos == obstacle2.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
 
@@ -268,9 +351,10 @@ def menu():
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
             elif snake.cabeza.pos == obstacle3.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -281,45 +365,50 @@ def menu():
         elif dificult == 'Hard' or dificult == 'Dinamic':
 
             if snake.cabeza.pos == obstacle1.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
             elif snake.cabeza.pos == obstacle2.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
             elif snake.cabeza.pos == obstacle3.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
             elif snake.cabeza.pos == obstacle4.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
             elif snake.cabeza.pos == obstacle5.pos:
-                print('Puntos: ', snake.size)
-                score = snake.size
-                punteo.insert_by(score, name=nombre)
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -329,20 +418,22 @@ def menu():
         draw(win, grid)
 
         # Verificar si la serpiente choco con ella misma
-        # try:
-        #     for x in range(snake.size):
-        #         if snake.cabeza.pos in list(map(lambda z: z.pos, snake.body[x + 1:])):
-        #             print('Puntos: ', snake.size)
-        #             score = snake.size
-        #             punteo.insert_by(score, name=nombre)
-        #
-        #             snake.restart((10, 10))
-        #
-        #             run = False
-        # except IndexError:
-        #     pygame.quit()
-        #     input('Perdiste, presiona la tecla enter para volver al menu...')
-        #     menu()
+        try:
+            choque = snake.positions_check()
+            if choque is False:
+                print('Frutas comidas: ', food_eaten)
+                score = food_eaten
+                longitud = snake.snake_len
+                punteo.insert_by(score, name=nombre, snake_len=longitud)
+
+                snake.restart((10, 10))
+                run = False
+                pygame.quit()
+                input('Perdiste, presiona la tecla enter para volver al menu...')
+                menu()
+        except AttributeError:
+            pass
+
 
 
 menu()
