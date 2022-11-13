@@ -55,26 +55,31 @@ def random_food(rows, item):
 
         # Se verifica que la comida no se genere sobre la cabeza de la serpiente
         if (dir_x, dir_y) == positions:
-            continue
-
-        # Verifica la dificultad para que la comida no se genere sobre los obstaculos
-        if dificult == 'Mid':
-            if (dir_x, dir_y) == obstacle1.pos:
-                continue
-            elif (dir_x, dir_y) == obstacle2.pos:
-                continue
-            elif (dir_x, dir_y) == obstacle3.pos:
-                continue
-        elif dificult == 'Hard' or dificult == 'Dinamic':
-            if (dir_x, dir_y) == obstacle1.pos:
-                continue
-            elif (dir_x, dir_y) == obstacle2.pos:
-                continue
-            elif (dir_x, dir_y) == obstacle3.pos:
-                continue
-            elif (dir_x, dir_y) == obstacle4.pos:
-                continue
-            elif (dir_x, dir_y) == obstacle5.pos:
+            # Verifica la dificultad para que la comida no se genere sobre los obstaculos
+            if dificult == 'Mid':
+                if (dir_x, dir_y) == obstacle1.pos:
+                    continue
+                elif (dir_x, dir_y) == obstacle2.pos:
+                    continue
+                elif (dir_x, dir_y) == obstacle3.pos or (dir_x, dir_y) == obstacle3_1.pos \
+                        or (dir_x, dir_y) == obstacle3_2.pos or (dir_x, dir_y) == obstacle3_3.pos:
+                    continue
+            elif dificult == 'Hard' or dificult == 'Dinamic':
+                if (dir_x, dir_y) == obstacle1.pos:
+                    continue
+                elif (dir_x, dir_y) == obstacle2.pos:
+                    continue
+                elif (dir_x, dir_y) == obstacle3.pos or (dir_x, dir_y) == obstacle3_1.pos \
+                        or (dir_x, dir_y) == obstacle3_2.pos or (dir_x, dir_y) == obstacle3_3.pos:
+                    continue
+                elif (dir_x, dir_y) == obstacle4.pos or (dir_x, dir_y) == obstacle4_1.pos \
+                        or (dir_x, dir_y) == obstacle4_2.pos or (dir_x, dir_y) == obstacle4_3.pos:
+                    continue
+                elif (dir_x, dir_y) == obstacle5.pos or (dir_x, dir_y) == obstacle5_1.pos \
+                        or (dir_x, dir_y) == obstacle5_2.pos or (dir_x, dir_y) == obstacle5_3.pos \
+                        or (dir_x, dir_y) == obstacle5_4.pos or (dir_x, dir_y) == obstacle5_5.pos:
+                    continue
+            else:
                 continue
         else:
             break
@@ -118,12 +123,27 @@ def draw(surface, grid):
         obstacle1.draw(surface)
         obstacle2.draw(surface)
         obstacle3.draw(surface)
+        obstacle3_1.draw(surface)
+        obstacle3_2.draw(surface)
+        obstacle3_3.draw(surface)
+
     elif dificult == 'Hard' or dificult == 'Dinamic':
         obstacle1.draw(surface)
         obstacle2.draw(surface)
         obstacle3.draw(surface)
+        obstacle3_1.draw(surface)
+        obstacle3_2.draw(surface)
+        obstacle3_3.draw(surface)
         obstacle4.draw(surface)
+        obstacle4_1.draw(surface)
+        obstacle4_2.draw(surface)
+        obstacle4_3.draw(surface)
         obstacle5.draw(surface)
+        obstacle5_1.draw(surface)
+        obstacle5_2.draw(surface)
+        obstacle5_3.draw(surface)
+        obstacle5_4.draw(surface)
+        obstacle5_5.draw(surface)
     pygame.display.update()
 
 
@@ -164,7 +184,9 @@ grid = init_grid(ROWS, COLS, BG_COLOR)
 
 # Funcion para el menu principal
 def menu():
-    global run, velocidad, win, food, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, dificult, snake
+    global run, velocidad, win, food, obstacle1, obstacle2, obstacle3, obstacle3_1, obstacle3_2, obstacle3_3, \
+        obstacle4, obstacle4_1, obstacle4_2, obstacle4_3, obstacle5, obstacle5_1, obstacle5_2, obstacle5_3, \
+        obstacle5_4, obstacle5_5, dificult, snake
     run = False
     nombre = ''
     longitud = 1
@@ -217,6 +239,9 @@ def menu():
             obstacle1 = brick()
             obstacle2 = brick()
             obstacle3 = column()
+            obstacle3_1 = Cube((obstacle3.pos[0] - 1, obstacle3.pos[1]), color=BLACK)
+            obstacle3_2 = Cube((obstacle3_1.pos[0] - 1, obstacle3_1.pos[1]), color=BLACK)
+            obstacle3_3 = Cube((obstacle3_2.pos[0] - 1, obstacle3_2.pos[1]), color=BLACK)
 
             dificult = 'Mid'
 
@@ -232,8 +257,19 @@ def menu():
             obstacle1 = brick()
             obstacle2 = brick()
             obstacle3 = column()
+            obstacle3_1 = Cube((obstacle3.pos[0] - 1, obstacle3.pos[1]), color=BLACK)
+            obstacle3_2 = Cube((obstacle3_1.pos[0] - 1, obstacle3_1.pos[1]), color=BLACK)
+            obstacle3_3 = Cube((obstacle3_2.pos[0] - 1, obstacle3_2.pos[1]), color=BLACK)
             obstacle4 = column()
+            obstacle4_1 = Cube((obstacle4.pos[0] - 1, obstacle4.pos[1]), color=BLACK)
+            obstacle4_2 = Cube((obstacle4_1.pos[0] - 1, obstacle4_1.pos[1]), color=BLACK)
+            obstacle4_3 = Cube((obstacle4_2.pos[0] - 1, obstacle4_2.pos[1]), color=BLACK)
             obstacle5 = wall()
+            obstacle5_1 = Cube((obstacle5.pos[0], obstacle5.pos[1] - 1), color=BLACK)
+            obstacle5_2 = Cube((obstacle5_1.pos[0], obstacle5_1.pos[1] - 1), color=BLACK)
+            obstacle5_3 = Cube((obstacle5_2.pos[0], obstacle5_2.pos[1] - 1), color=BLACK)
+            obstacle5_4 = Cube((obstacle5_3.pos[0], obstacle5_3.pos[1] - 1), color=BLACK)
+            obstacle5_5 = Cube((obstacle5_4.pos[0], obstacle5_4.pos[1] - 1), color=BLACK)
 
             dificult = 'Hard'
 
@@ -248,8 +284,19 @@ def menu():
             obstacle1 = brick()
             obstacle2 = brick()
             obstacle3 = column()
+            obstacle3_1 = Cube((obstacle3.pos[0] - 1, obstacle3.pos[1]), color=BLACK)
+            obstacle3_2 = Cube((obstacle3_1.pos[0] - 1, obstacle3_1.pos[1]), color=BLACK)
+            obstacle3_3 = Cube((obstacle3_2.pos[0] - 1, obstacle3_2.pos[1]), color=BLACK)
             obstacle4 = column()
+            obstacle4_1 = Cube((obstacle4.pos[0] - 1, obstacle4.pos[1]), color=BLACK)
+            obstacle4_2 = Cube((obstacle4_1.pos[0] - 1, obstacle4_1.pos[1]), color=BLACK)
+            obstacle4_3 = Cube((obstacle4_2.pos[0] - 1, obstacle4_2.pos[1]), color=BLACK)
             obstacle5 = wall()
+            obstacle5_1 = Cube((obstacle5.pos[0], obstacle5.pos[1] - 1), color=BLACK)
+            obstacle5_2 = Cube((obstacle5_1.pos[0], obstacle5_1.pos[1] - 1), color=BLACK)
+            obstacle5_3 = Cube((obstacle5_2.pos[0], obstacle5_2.pos[1] - 1), color=BLACK)
+            obstacle5_4 = Cube((obstacle5_3.pos[0], obstacle5_3.pos[1] - 1), color=BLACK)
+            obstacle5_5 = Cube((obstacle5_4.pos[0], obstacle5_4.pos[1] - 1), color=BLACK)
 
             dificult = 'Dinamic'
             timer_start = time()
@@ -381,7 +428,8 @@ def menu():
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.cabeza.pos == obstacle3.pos:
+            elif snake.cabeza.pos == obstacle3.pos or snake.cabeza.pos == obstacle3_1.pos \
+                    or snake.cabeza.pos == obstacle3_2.pos or snake.cabeza.pos == obstacle3_3.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
                 punteo.insert_by(score, nombre, longitud)
@@ -412,7 +460,8 @@ def menu():
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.cabeza.pos == obstacle3.pos:
+            elif snake.cabeza.pos == obstacle3.pos or snake.cabeza.pos == obstacle3_1.pos \
+                    or snake.cabeza.pos == obstacle3_2.pos or snake.cabeza.pos == obstacle3_3.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
                 punteo.insert_by(score, nombre, longitud)
@@ -421,7 +470,8 @@ def menu():
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.cabeza.pos == obstacle4.pos:
+            elif snake.cabeza.pos == obstacle4.pos or snake.cabeza.pos == obstacle4_1.pos \
+                    or snake.cabeza.pos == obstacle4_2.pos or snake.cabeza.pos == obstacle4_3.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
                 punteo.insert_by(score, nombre, longitud)
@@ -430,7 +480,9 @@ def menu():
                 pygame.quit()
                 input('Perdiste, presiona la tecla enter para volver al menu...')
                 menu()
-            elif snake.cabeza.pos == obstacle5.pos:
+            elif snake.cabeza.pos == obstacle5.pos or snake.cabeza.pos == obstacle5_1.pos \
+                    or snake.cabeza.pos == obstacle5_2.pos or snake.cabeza.pos == obstacle5_3.pos \
+                    or snake.cabeza.pos == obstacle5_4.pos or snake.cabeza.pos == obstacle5_5.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
                 punteo.insert_by(score, nombre, longitud)
