@@ -5,6 +5,7 @@ from cube import Cube
 from time import time
 from lista_puntuacion import SimplyLinkedList
 
+# Se crean las variables necesarias antes de iniciar el juego
 snake = Snake()
 punteo = SimplyLinkedList()
 run = False
@@ -16,6 +17,7 @@ dificult = ''
 def random_obsatcle(rows, item):
     positions = item.cabeza.pos
 
+    # Se verifica que el obstaculo no se genere sobre la serpiente
     while True:
         dir_x = random.randrange(rows)
         dir_y = random.randrange(rows)
@@ -26,6 +28,7 @@ def random_obsatcle(rows, item):
     return dir_x, dir_y
 
 
+# Funciones que generan los 3 tipos de obstaculos
 def brick():
     ladrillo = Cube(random_obsatcle(ROWS, snake), color=BLACK)
     return ladrillo
@@ -49,8 +52,12 @@ def random_food(rows, item):
     while True:
         dir_x = random.randrange(rows)
         dir_y = random.randrange(rows)
+
+        # Se verifica que la comida no se genere sobre la cabeza de la serpiente
         if (dir_x, dir_y) == positions:
             continue
+
+        # Verifica la dificultad para que la comida no se genere sobre los obstaculos
         if dificult == 'Mid':
             if (dir_x, dir_y) == obstacle1.pos:
                 continue
@@ -105,6 +112,8 @@ def draw(surface, grid):
     draw_grid(surface, grid)
     snake.draw(surface)
     food.draw(surface)
+
+    # Verifica la dificultad para dibujar los obstaculos necesarios
     if dificult == 'Mid':
         obstacle1.draw(surface)
         obstacle2.draw(surface)
@@ -155,7 +164,7 @@ def menu():
     velocidad = FPS
     dificult = 'Easy'
     food_eaten = 0
-    choque = True
+    timer_start = 0
     print('Bienvenido a Snake')
     print('1) Jugar')
     print('2) Tabla de puntuaciones')
@@ -163,6 +172,14 @@ def menu():
     opcion = int(input('Seleccione una opcion: '))
     if opcion == 1:
         nombre = input('Ingrese su nombre: ')
+        print('Seleccion de color para la serpiente')
+        print('1) Rojo')
+        print('2) Verde')
+        print('3) Azul')
+        print('4) Rojo')
+        op = int(input('Seleccione el color: '))
+        if op == 1:
+
         print('Dificultad: ')
         print('1) Facil')
         print('2) Intermedio')
@@ -313,8 +330,8 @@ def menu():
                     input('Perdiste, presiona la tecla enter para volver al menu...')
                     menu()
 
-        # Verificar si al encojerse aun tiene cuerpo la serpiente
-        if snake.snake_len <= 0:
+        # Verificar si aun tiene cuerpo la serpiente
+        if snake.snake_len <= 1:
             print('Frutas comidas: ', food_eaten)
             score = food_eaten
             longitud = snake.snake_len
@@ -433,7 +450,6 @@ def menu():
                 menu()
         except AttributeError:
             pass
-
 
 
 menu()

@@ -67,6 +67,7 @@ class Snake:
                 else:
                     self.cabeza.move(self.cabeza.dir_x, self.cabeza.dir_y)
 
+        # Actualiza la posicion del cuerpo de la serpiente
         current = self.head
         pos1 = current.pos
         while current.next is not None:
