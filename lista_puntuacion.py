@@ -11,8 +11,8 @@ class SimplyLinkedList:
         return self.head is None and self.tail is None
 
     # insertar al inicio
-    def unshift(self, data, name):
-        new_node = Node(data, name=name)
+    def unshift(self, data, name, longitud):
+        new_node = Node(data, longitud, name=name)
         if self.is_empty():
             self.head = new_node
             self.tail = new_node
@@ -23,8 +23,8 @@ class SimplyLinkedList:
             self.size += 1
 
     # insertar al final
-    def appen(self, data, name):
-        new_node = Node(data, name=name)
+    def appen(self, data, name, longitud):
+        new_node = Node(data, longitud, name=name)
         if self.is_empty():
             self.head = new_node
             self.tail = new_node
@@ -35,10 +35,10 @@ class SimplyLinkedList:
             self.size += 1
 
     # insertar en una posicion especifica
-    def insert_at(self, data, pos, name):
-        new_node = Node(data, name=name)
+    def insert_at(self, data, pos, name, longitud):
+        new_node = Node(data, longitud, name=name)
         if pos == 0:
-            self.unshift(data, name)
+            self.unshift(data, name, longitud)
         if self.is_empty():
             self.head = new_node
             self.tail = new_node
@@ -50,8 +50,8 @@ class SimplyLinkedList:
             self.size += 1
 
     # insertar mediante un dato especifico
-    def insert_by(self, data, name, snake_len):
-        new_node = Node(data, name=name, snake_len=snake_len)
+    def insert_by(self, data, name, longitud):
+        new_node = Node(data, longitud, name=name)
         pos = 0
 
         if self.is_empty():
@@ -60,9 +60,9 @@ class SimplyLinkedList:
             self.size += 1
         else:
             if self.head.data <= data:
-                self.unshift(data, name)
+                self.unshift(data, name, longitud)
             elif self.tail.data >= data:
-                self.appen(data, name)
+                self.appen(data, name, longitud)
             else:
                 current = self.head
                 while True:

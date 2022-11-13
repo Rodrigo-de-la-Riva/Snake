@@ -12,7 +12,7 @@ class Snake:
         self.tail = None
         self.snake_len = 0
         self.color = color
-        self.cabeza = Cube((pos_x, pos_y))
+        self.cabeza = Cube((pos_x, pos_y), color=self.color)
         self.body = self.transversal()
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -78,14 +78,13 @@ class Snake:
 
     # Funcion para dibujar la serpiente
     def draw(self, surface):
-        for i in range(self.snake_len):
-            if i == 1:
-                self.cabeza.draw(surface, True)
+        current = self.head
+        while current is not None:
+            if current.pos == self.cabeza.pos:
+                current.draw(surface, True)
             else:
-                current = self.head
-                while current is not None:
-                    current.draw(surface)
-                    current = current.next
+                current.draw(surface)
+            current = current.next
 
     # Funcion para añadir otro cubo al cuerpo de la serpiente
     def add_cube(self):
@@ -94,13 +93,13 @@ class Snake:
         dx, dy = tail.dir_x, tail.dir_y
 
         if dx == 1 and dy == 0:
-            self.insert(Cube((tail.pos[0]-1, tail.pos[1])))
+            self.insert(Cube((tail.pos[0]-1, tail.pos[1]), color=self.color))
         elif dx == -1 and dy == 0:
-            self.insert(Cube((tail.pos[0]+1, tail.pos[1])))
+            self.insert(Cube((tail.pos[0]+1, tail.pos[1]), color=self.color))
         elif dx == 0 and dy == 1:
-            self.insert(Cube((tail.pos[0], tail.pos[1]-1)))
+            self.insert(Cube((tail.pos[0], tail.pos[1]-1), color=self.color))
         elif dx == 0 and dy == -1:
-            self.insert(Cube((tail.pos[0], tail.pos[1]+1)))
+            self.insert(Cube((tail.pos[0], tail.pos[1]+1), color=self.color))
 
         while current is not None:
             current.dir_x = dx
@@ -118,14 +117,13 @@ class Snake:
 
     # Funcion para reiniciar la serpiente a su posicion inicial
     def restart(self, pos):
-        self.cabeza = Cube(pos)
+        self.cabeza = Cube(pos, color=self.color)
         self.body = self.transversal()
         self.turns = {}
         self.dir_x = 0
         self.dir_y = 1
         self.head = None
         self.tail = None
-        self.snake_len = 0
         self.insert(self.cabeza)
 
     # Funciones para el funcionamiento de la cola

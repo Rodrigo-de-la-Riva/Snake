@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, data, name='', snake_len=0):
+    def __init__(self, data, snake_len, name=''):
         self.data = data
         self.name = name
         self.snake_len = snake_len

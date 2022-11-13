@@ -6,8 +6,8 @@ from time import time
 from lista_puntuacion import SimplyLinkedList
 
 # Se crean las variables necesarias antes de iniciar el juego
-snake = Snake()
 punteo = SimplyLinkedList()
+snake = Snake()
 run = False
 velocidad = FPS
 dificult = ''
@@ -127,6 +127,12 @@ def draw(surface, grid):
     pygame.display.update()
 
 
+# Funcion de seleccion de color aleatorio
+def color_select():
+    color = ((random.randint(0, 250)), (random.randint(0, 250)), (random.randint(0, 250)))
+    return color
+
+
 # Funciones de dibujo para la cuadricula
 def init_grid(rows, cols, color):
     grid = []
@@ -158,9 +164,10 @@ grid = init_grid(ROWS, COLS, BG_COLOR)
 
 # Funcion para el menu principal
 def menu():
-    global run, velocidad, win, food, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, dificult
+    global run, velocidad, win, food, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, dificult, snake
     run = False
     nombre = ''
+    longitud = 1
     velocidad = FPS
     dificult = 'Easy'
     food_eaten = 0
@@ -176,9 +183,16 @@ def menu():
         print('1) Rojo')
         print('2) Verde')
         print('3) Azul')
-        print('4) Rojo')
+        print('4) Aleatorio')
         op = int(input('Seleccione el color: '))
         if op == 1:
+            snake = Snake(color=RED)
+        elif op == 2:
+            snake = Snake(color=GREEN)
+        elif op == 3:
+            snake = Snake(color=BLUE)
+        elif op == 4:
+            snake = Snake(color=color_select())
 
         print('Dificultad: ')
         print('1) Facil')
@@ -273,12 +287,14 @@ def menu():
                 snake.add_cube()
                 food = food_type()
                 food_eaten += 1
+                longitud += 1
 
             elif food.food == 'fresa':
                 snake.add_cube()
                 snake.add_cube()
                 food = food_type()
                 food_eaten += 1
+                longitud += 2
 
             elif food.food == 'banano':
                 snake.add_cube()
@@ -286,17 +302,18 @@ def menu():
                 snake.add_cube()
                 food = food_type()
                 food_eaten += 1
+                longitud += 3
 
             elif food.food == 'pera':
                 if snake.snake_len > 1:
                     snake.pop()
                     food = food_type()
                     food_eaten += 1
+                    longitud -= 1
                 else:
                     print('Frutas comidas: ', food_eaten)
                     score = food_eaten
-                    longitud = snake.snake_len
-                    punteo.insert_by(score, name=nombre, snake_len=longitud)
+                    punteo.insert_by(score, nombre, longitud)
 
                     food = food_type()
 
@@ -315,12 +332,12 @@ def menu():
 
                     food = food_type()
                     food_eaten += 1
+                    longitud -= 5
 
                 else:
                     print('Frutas comidas: ', food_eaten)
                     score = food_eaten
-                    longitud = snake.snake_len
-                    punteo.insert_by(score, name=nombre, snake_len=longitud)
+                    punteo.insert_by(score, nombre, longitud)
 
                     food = food_type()
 
@@ -334,8 +351,7 @@ def menu():
         if snake.snake_len <= 1:
             print('Frutas comidas: ', food_eaten)
             score = food_eaten
-            longitud = snake.snake_len
-            punteo.insert_by(score, name=nombre, snake_len=longitud)
+            punteo.insert_by(score, nombre, longitud)
 
             snake.restart((10, 10))
 
@@ -348,8 +364,7 @@ def menu():
             if snake.cabeza.pos == obstacle1.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
 
@@ -359,8 +374,7 @@ def menu():
             elif snake.cabeza.pos == obstacle2.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
 
@@ -370,8 +384,7 @@ def menu():
             elif snake.cabeza.pos == obstacle3.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -384,8 +397,7 @@ def menu():
             if snake.cabeza.pos == obstacle1.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -394,8 +406,7 @@ def menu():
             elif snake.cabeza.pos == obstacle2.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -404,8 +415,7 @@ def menu():
             elif snake.cabeza.pos == obstacle3.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -414,8 +424,7 @@ def menu():
             elif snake.cabeza.pos == obstacle4.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -424,8 +433,7 @@ def menu():
             elif snake.cabeza.pos == obstacle5.pos:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 pygame.quit()
@@ -440,8 +448,7 @@ def menu():
             if choque is False:
                 print('Frutas comidas: ', food_eaten)
                 score = food_eaten
-                longitud = snake.snake_len
-                punteo.insert_by(score, name=nombre, snake_len=longitud)
+                punteo.insert_by(score, nombre, longitud)
 
                 snake.restart((10, 10))
                 run = False
