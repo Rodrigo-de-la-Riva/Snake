@@ -131,3 +131,9 @@ class SimplyLinkedList:
             self.size -= 1
 
             return delete.data
+
+    def positions(self, pos):
+        current = self.find_at(pos)
+        result = ''
+        result += f'Jugador: {current.name} Tamaño de la serpiente: {current.snake_len} Frutas comidas: {str(current.data)}'
+        return result

@@ -25,5 +25,5 @@ PIXEL_SIZE = WIDTH // COLS
 DRAW_GRID_LINES = True
 
 
-def font(size):
+def set_font(size):
     return pygame.font.SysFont('comicsans', size)
